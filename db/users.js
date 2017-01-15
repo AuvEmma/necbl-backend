@@ -1,11 +1,13 @@
 'use strict';
 const mongodb       = require('mongodb');
 const bcrypt        = require('bcrypt');
+const secret        = process.env.SECRET;
 
 const MongoClient   = mongodb.MongoClient;
 const mongoUrl      = 'mongodb://' + process.env.DB_URL + '/' + process.env.DB_NAME;
 
 const salt          = bcrypt.genSaltSync(10);
+const jwt         = require('jsonwebtoken');
 
 function createSecure(schoolName, password, callback) {
   bcrypt.genSalt(function(err, salt) {
@@ -28,15 +30,20 @@ function createUser(req, res, next) {
           name: schoolName,
           password: hash
         };
+        let query = {
+          name: schoolName
+        }
+        let options = {
+          upsert: true
+        }
         console.log(`Adding new user`, newSchool);
-        usersCollection.insert(newSchool, function(err, result){
+        usersCollection.update(query, newSchool, options, function(err, result){
           if (err) {
             console.error(error);
           } else {
             console.log('Inserted');
-            console.log('Result:', result);
-            console.log('End of Result');
-            res.rows = result;
+            console.log('Result:', result.result);
+            res.json(result.result)
           };
           db.close(function(){
             console.log('Close DB');
@@ -49,7 +56,7 @@ function createUser(req, res, next) {
 
 function login(req, res, next) {
   let schoolName      = req.body.schoolName;
-  let password        = req.body.password;
+  let passcode        = req.body.passcode;
   MongoClient.connect(mongoUrl, function (err, db) {
     let usersCollection = db.collection('users');
     if (err) {
@@ -62,10 +69,37 @@ function login(req, res, next) {
           console.error('Error while finding school name from db', err);
         } else if (result.length) {
           console.log('found:', result);
-          if (bcrypt.compareSync(password, data.password_digest)) {
-            res.rows = result
-          };
-          res.status(401).json({data: "password and schoolName do not match"})
+          if (bcrypt.compareSync(passcode, result[0].password)) {
+            var token = jwt.sign(schoolName, secret);
+            res.json({user: schoolName, token: token});
+          }else{
+            res.status(401).json({data: "password and schoolName do not match"})
+          }
+        } else {
+          res.json('No school found');
+          console.log('No school found');
+        };
+        db.close(function(){
+          console.log('db closed');
+        });
+      });
+    };
+  });
+};
+
+function allUser(req, res, next) {
+  MongoClient.connect(mongoUrl, function (err, db) {
+    let usersCollection = db.collection('users');
+    if (err) {
+      console.error(`Unable to connect to the mongoDB server ${mongoUrl} while logging in. ERROR: `, err);
+    } else{
+      console.log(`Connection established to ${mongoUrl}`);
+      usersCollection.find().toArray(function(err, result){
+        if(err){
+          console.error('Error while finding school name from db', err);
+        } else if (result.length) {
+          console.log(result)
+          res.json(result);
         } else {
           res.json('No school found');
           console.log('No school found');
@@ -80,3 +114,4 @@ function login(req, res, next) {
 
 module.exports.login = login;
 module.exports.createUser = createUser;
+module.exports.allUser = allUser;

@@ -15,16 +15,12 @@ users.use(function(error, request, response, next) {
 });
 
 users.route('/')
-  .post( db.createUser, (req,res)=>res.json(res.rows) )
+  .get( db.allUser )
+  .post( db.createUser )
   // Create a new user
 
 users.route('/login')
-  .post( db.login, (req,res)=> {
-    console.log('heheh');
-    var token = jwt.sign(res.rows, secret);
-    res.json({user: res.rows, token: token});
-  })
-
+  .post( db.login )
 
 
 module.exports = users;
