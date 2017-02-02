@@ -71,7 +71,7 @@ function login(req, res, next) {
           console.log('found:', result);
           if (bcrypt.compareSync(passcode, result[0].password)) {
             var token = jwt.sign(schoolName, secret);
-            res.json({user: schoolName, token: token});
+            res.json({id: result[0]._id, token: token});
           }else{
             res.status(401).json({data: "password and schoolName do not match"})
           }
@@ -112,6 +112,27 @@ function allUser(req, res, next) {
   });
 };
 
-module.exports.login = login;
+function checkToken(req, res, next){
+  let token = req.body.token;
+  if(token){
+    let decoded = jwt.decode(token, secret);
+    MongoClient.connect(mongoUrl, function (err, db) {
+      let usersCollection = db.collection('users');
+      usersCollection.find({name: decoded}).toArray(function(err, result){
+        if(err){
+          console.error('Error while finding school name from db', err);
+        } else if (result.length) {
+          console.log('results in checkToken',result);
+          res.json(result);
+        } else {
+          res.json('No School Found');
+        };
+        db.close(()=>console.log('db closed'))
+      });
+    });
+  };
+};
+module.exports.login      = login;
 module.exports.createUser = createUser;
-module.exports.allUser = allUser;
+module.exports.allUser    = allUser;
+module.exports.checkToken = checkToken;

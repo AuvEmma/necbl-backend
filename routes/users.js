@@ -22,5 +22,8 @@ users.route('/')
 users.route('/login')
   .post( db.login )
 
+users.route('/check')
+  .post( db.checkToken )
+
 
 module.exports = users;
