@@ -2,18 +2,19 @@
 if(process.env.ENVIRONMENT !== 'production'){
   require('dotenv').config();
 }
-const express      = require('express');
-const logger       = require('morgan');
-const cors         = require('cors');
-const path         = require('path');
-const bodyParser   = require('body-parser');
-const secret       = process.env.SECRET;
+const express         = require('express');
+const logger          = require('morgan');
+const cors            = require('cors');
+const path            = require('path');
+const bodyParser      = require('body-parser');
+const secret          = process.env.SECRET;
 // const expressJWT   = require('express-jwt');
-const userRoutes   = require( path.join(__dirname, '/routes/users'));
+const userRoutes      = require( path.join(__dirname, '/routes/users'));
+const playersRoutes   = require( path.join(__dirname, '/routes/players'));
 
-const app          = express();
-const _port        = process.argv[2]|| process.env.PORT||3001;
-const corsOptions  = {
+const app             = express();
+const _port           = process.argv[2]|| process.env.PORT||3001;
+const corsOptions     = {
   origin: ['http://localhost:3000','http://localhost:4200'],
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 };

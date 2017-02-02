@@ -3,10 +3,7 @@
 const express     = require('express');
 const users       = express.Router();
 const bodyParser  = require('body-parser');
-const db          = require('./../db/users');
-const secret      = process.env.SECRET;
-const expressJWT  = require('express-jwt');
-const jwt         = require('jsonwebtoken');
+const db          = require('./../db/players');
 
 users.use(function(error, request, response, next) {
   if(error.name === 'UnauthorizredError') {
@@ -15,15 +12,5 @@ users.use(function(error, request, response, next) {
 });
 
 users.route('/')
-  .get( db.allUsers )
-  .post( db.createUser )
-  // Create a new user
-
-users.route('/login')
-  .post( db.login )
-
-users.route('/check')
-  .post( db.checkToken )
-
-
-module.exports = users;
+  .get( db.allPlayers )
+  .post( db.createPlayer )

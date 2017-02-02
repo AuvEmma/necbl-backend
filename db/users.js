@@ -87,7 +87,7 @@ function login(req, res, next) {
   });
 };
 
-function allUser(req, res, next) {
+function allUsers(req, res, next) {
   MongoClient.connect(mongoUrl, function (err, db) {
     let usersCollection = db.collection('users');
     if (err) {
@@ -134,5 +134,5 @@ function checkToken(req, res, next){
 };
 module.exports.login      = login;
 module.exports.createUser = createUser;
-module.exports.allUser    = allUser;
+module.exports.allUsers   = allUsers;
 module.exports.checkToken = checkToken;
