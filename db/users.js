@@ -76,7 +76,7 @@ function login(req, res, next) {
             res.status(401).json({data: "password and schoolName do not match"})
           }
         } else {
-          res.json('No school found');
+          res.json('No_School_Found');
           console.log('No school found');
         };
         db.close(function(){
@@ -101,7 +101,7 @@ function allUsers(req, res, next) {
           console.log(result)
           res.json(result);
         } else {
-          res.json('No school found');
+          res.json('No_School_Found');
           console.log('No school found');
         };
         db.close(function(){
@@ -125,7 +125,7 @@ function checkToken(req, res, next){
           console.log('results in checkToken',result);
           res.json(result);
         } else {
-          res.json('No School Found');
+          res.json('No_School_Found');
         };
         db.close(()=>console.log('db closed'))
       });
