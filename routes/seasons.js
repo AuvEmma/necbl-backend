@@ -1,18 +1,18 @@
 'use strict'
 
 const express     = require('express');
-const players     = express.Router();
+const seasons     = express.Router();
 const bodyParser  = require('body-parser');
-const db          = require('./../db/players');
+const db          = require('./../db/seasons');
 
-players.use(function(error, request, response, next) {
+seasons.use(function(error, request, response, next) {
   if(error.name === 'UnauthorizredError') {
     response.status(401).json({message: 'you need an authoriation token to view condifential information'});
   }
 });
 
-players.route('/')
-  .get( db.allPlayers )
-  .post( db.createPlayer )
+seasons.route('/')
+  .get( db.allSeasons )
+  .post( db.createSeason )
 
-  module.exports = players;
+module.exports = seasons;

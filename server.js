@@ -9,8 +9,10 @@ const path            = require('path');
 const bodyParser      = require('body-parser');
 const secret          = process.env.SECRET;
 // const expressJWT   = require('express-jwt');
-const userRoutes      = require( path.join(__dirname, '/routes/users'));
+const usersRoutes     = require( path.join(__dirname, '/routes/users'));
 const playersRoutes   = require( path.join(__dirname, '/routes/players'));
+const seasonsRoutes   = require( path.join(__dirname, '/routes/seasons'));
+const regionsRoutes   = require( path.join(__dirname, '/routes/regions'));
 
 const app             = express();
 const _port           = process.argv[2]|| process.env.PORT||3001;
@@ -31,7 +33,10 @@ app.use(express.static(path.join(__dirname,'public')));
 //set up some logging
 app.use(logger('dev'));
 
-app.use('/users', userRoutes);
+app.use('/users', usersRoutes);
+app.use('/players', playersRoutes);
+app.use('/seasons', seasonsRoutes);
+app.use('/regions', regionsRoutes);
 
 app.get('/',(req,res)=>{
   res.sendFile(path.join(__dirname,'public/index.html'));
