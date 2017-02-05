@@ -15,4 +15,7 @@ players.route('/')
   .get( db.allPlayers )
   .post( db.createPlayer )
 
+players.route('/:playerId')
+  .delete ( db.deletePlayer )
+
   module.exports = players;

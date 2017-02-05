@@ -71,7 +71,7 @@ function login(req, res, next) {
           console.log('found:', result);
           if (bcrypt.compareSync(passcode, result[0].password)) {
             var token = jwt.sign(schoolName, secret);
-            res.json({id: result[0]._id, token: token});
+            res.json({id: result[0]._id, name: result[0].name, token: token});
           }else{
             res.status(401).json({data: "password and schoolName do not match"})
           }
