@@ -12,10 +12,13 @@ players.use(function(error, request, response, next) {
 });
 
 players.route('/')
-  .get( db.allPlayers )
+  .get( db.getPlayers )
   .post( db.createPlayer )
 
 players.route('/:playerId')
   .delete ( db.deletePlayer )
+
+players.route('/all')
+  .get( db.allPlayers )
 
 module.exports = players;

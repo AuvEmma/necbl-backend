@@ -31,24 +31,22 @@ function createPlayer(req, res, next){
 }
 
 function getPlayers(req, res, next){
+  let schoolId = req.query.school;
+  let query = {
+    school: {
+      $elemMatch:{
+        $eq: schoolId
+      }
+    }
+  };
+
   MongoClient.connect(mongoUrl, function (err, db) {
     let playersCollection = db.collection('players');
     if (err) {
       console.error(`Unable to connect to the mongoDB server ${mongoUrl} while getting players. ERROR: `, err);
     } else{
       console.log(`Connection established to ${mongoUrl}`);
-      if (req.body.schoolId) {
-        let schoolId = req.body.schoolId;
-        let query = {
-          school: {
-            $elemMatch:{
-              $eq: ObjectId(schoolId)
-            }
-          }
-        };
-      }else{
-        let query = {};
-      }
+      console.log('========>',query)
       playersCollection.find(query).toArray(function(err, result){
         if(err){
           console.error('Error while finding player name from db', err);
@@ -121,3 +119,4 @@ function allPlayers(req, res, next){
 module.exports.createPlayer = createPlayer;
 module.exports.allPlayers = allPlayers;
 module.exports.deletePlayer = deletePlayer;
+module.exports.getPlayers = getPlayers;
