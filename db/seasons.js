@@ -9,7 +9,7 @@ function createSeason(req, res, next){
   MongoClient.connect(mongoUrl, function (err, db) {
     let seasonsCollection = db.collection('seasons');
     if (err) {
-      console.error(`Unable to connect to the mongoDB server ${mongoUrl} while creating user. ERROR: `, err);
+      console.error(`Unable to connect to the mongoDB server ${mongoUrl} while creating season. ERROR: `, err);
     } else {
       console.log(`Connection established to ${mongoUrl}`);
       let newSeason = {
@@ -44,7 +44,7 @@ function allSeasons(req, res, next) {
   MongoClient.connect(mongoUrl, function (err, db) {
     let seasonsCollection = db.collection('seasons');
     if (err) {
-      console.error(`Unable to connect to the mongoDB server ${mongoUrl} while logging in. ERROR: `, err);
+      console.error(`Unable to connect to the mongoDB server ${mongoUrl} while getting all seasons. ERROR: `, err);
     } else{
       console.log(`Connection established to ${mongoUrl}`);
       seasonsCollection.find().toArray(function(err, result){

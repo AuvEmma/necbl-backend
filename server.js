@@ -2,21 +2,21 @@
 if(process.env.ENVIRONMENT !== 'production'){
   require('dotenv').config();
 }
-const express         = require('express');
-const logger          = require('morgan');
-const cors            = require('cors');
-const path            = require('path');
-const bodyParser      = require('body-parser');
-const secret          = process.env.SECRET;
-// const expressJWT   = require('express-jwt');
-const usersRoutes     = require( path.join(__dirname, '/routes/users'));
-const playersRoutes   = require( path.join(__dirname, '/routes/players'));
-const seasonsRoutes   = require( path.join(__dirname, '/routes/seasons'));
-const regionsRoutes   = require( path.join(__dirname, '/routes/regions'));
-
-const app             = express();
-const _port           = process.argv[2]|| process.env.PORT||3001;
-const corsOptions     = {
+const express             = require('express');
+const logger              = require('morgan');
+const cors                = require('cors');
+const path                = require('path');
+const bodyParser          = require('body-parser');
+const secret              = process.env.SECRET;
+// const expressJWT       = require('express-jwt');
+const usersRoutes         = require( path.join(__dirname, '/routes/users'));
+const playersRoutes       = require( path.join(__dirname, '/routes/players'));
+const seasonsRoutes       = require( path.join(__dirname, '/routes/seasons'));
+const regionsRoutes       = require( path.join(__dirname, '/routes/regions'));
+const applicationsRoutes  = require( path.join(__dirname, '/routes/applications'));
+const app                 = express();
+const _port               = process.argv[2]|| process.env.PORT||3001;
+const corsOptions         = {
   origin: ['http://localhost:3000','http://localhost:4200', 'http://54.158.161.155','https://54.158.161.155'],
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
@@ -37,6 +37,7 @@ app.use('/users', usersRoutes);
 app.use('/players', playersRoutes);
 app.use('/seasons', seasonsRoutes);
 app.use('/regions', regionsRoutes);
+app.use('/applications', applicationsRoutes);
 
 app.get('/',(req,res)=>{
   res.sendFile(path.join(__dirname,'public/index.html'));

@@ -6,11 +6,10 @@ const ObjectId      = require('mongodb').ObjectID;
 
 function createPlayer(req, res, next){
   let player    = req.body;
-  console.log(req.body)
   MongoClient.connect(mongoUrl, function (err, db) {
     let playersCollection = db.collection('players');
     if (err) {
-      console.error(`Unable to connect to the mongoDB server ${mongoUrl} while creating user. ERROR: `, err);
+      console.error(`Unable to connect to the mongoDB server ${mongoUrl} while creating player. ERROR: `, err);
     } else {
       console.log(`Connection established to ${mongoUrl}`);
       let newPlayer = player;
@@ -35,17 +34,21 @@ function getPlayers(req, res, next){
   MongoClient.connect(mongoUrl, function (err, db) {
     let playersCollection = db.collection('players');
     if (err) {
-      console.error(`Unable to connect to the mongoDB server ${mongoUrl} while logging in. ERROR: `, err);
+      console.error(`Unable to connect to the mongoDB server ${mongoUrl} while getting players. ERROR: `, err);
     } else{
       console.log(`Connection established to ${mongoUrl}`);
-      let schoolId = req.body.schoolId;
-      let query = {
-        school: {
-          $elemMatch:{
-            $eq: ObjectId(schoolId)
+      if (req.body.schoolId) {
+        let schoolId = req.body.schoolId;
+        let query = {
+          school: {
+            $elemMatch:{
+              $eq: ObjectId(schoolId)
+            }
           }
-        }
-      };
+        };
+      }else{
+        let query = {};
+      }
       playersCollection.find(query).toArray(function(err, result){
         if(err){
           console.error('Error while finding player name from db', err);
@@ -68,7 +71,7 @@ function deletePlayer(req, res, next){
   MongoClient.connect(mongoUrl, function (err, db) {
     let playersCollection = db.collection('players');
     if (err) {
-      console.error(`Unable to connect to the mongoDB server ${mongoUrl} while logging in. ERROR: `, err);
+      console.error(`Unable to connect to the mongoDB server ${mongoUrl} while deleting player. ERROR: `, err);
     } else{
       console.log(`Connection established to ${mongoUrl}`);
       let playerId = req.params.playerId;
@@ -82,7 +85,7 @@ function deletePlayer(req, res, next){
         } else{
           console.log('Deleted',result)
           res.json(result);
-        }  
+        }
         db.close(function(){
           console.log('db closed');
         });

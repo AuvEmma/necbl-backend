@@ -10,7 +10,7 @@ function createRegion(req, res, next){
   MongoClient.connect(mongoUrl, function (err, db) {
     let regionsCollection = db.collection('regions');
     if (err) {
-      console.error(`Unable to connect to the mongoDB server ${mongoUrl} while creating user. ERROR: `, err);
+      console.error(`Unable to connect to the mongoDB server ${mongoUrl} while creating region. ERROR: `, err);
     } else {
       console.log(`Connection established to ${mongoUrl}`);
       let newRegion = {
@@ -44,7 +44,7 @@ function deleteRegion(req, res, next){
   MongoClient.connect(mongoUrl, function (err, db) {
     let regionsCollection = db.collection('regions');
     if (err) {
-      console.error(`Unable to connect to the mongoDB server ${mongoUrl} while creating user. ERROR: `, err);
+      console.error(`Unable to connect to the mongoDB server ${mongoUrl} while deleting region. ERROR: `, err);
     } else {
       console.log(`Connection established to ${mongoUrl}`);
       let query = {
@@ -72,7 +72,7 @@ function allRegions(req, res, next) {
   MongoClient.connect(mongoUrl, function (err, db) {
     let regionsCollection = db.collection('regions');
     if (err) {
-      console.error(`Unable to connect to the mongoDB server ${mongoUrl} while logging in. ERROR: `, err);
+      console.error(`Unable to connect to the mongoDB server ${mongoUrl} while getting all regions. ERROR: `, err);
     } else{
       console.log(`Connection established to ${mongoUrl}`);
       regionsCollection.find().toArray(function(err, result){
