@@ -30,29 +30,60 @@ function createApplication(req, res, next){
 }
 
 function allApplications(req, res, next){
-  let query = req.query;
-  MongoClient.connect(mongoUrl, function (err, db) {
-    let applicationsCollection = db.collection('applications');
-    if (err) {
-      console.error(`Unable to connect to the mongoDB server ${mongoUrl} while getting applications. ERROR: `, err);
-    } else{
-      console.log(`Connection established to ${mongoUrl}`);
-      applicationsCollection.find(query).toArray(function(err, result){
-        if(err){
-          console.error('Error while finding application from db', err);
-        } else if (result.length) {
-          console.log(result)
-          res.json(result);
-        } else {
-          res.json('No_Application_Found');
-          console.log('No_Application_Found');
-        };
-        db.close(function(){
-          console.log('db closed');
+  if(req.query.schoolid){
+    console.log('============== ===>',req.query)
+    let query = {
+      '$and':[
+        {'schoolid': req.query.schoolid},
+        {'season.id': req.query.seasonid}
+      ]
+    }
+    MongoClient.connect(mongoUrl, function (err, db) {
+      let applicationsCollection = db.collection('applications');
+      if (err) {
+        console.error(`Unable to connect to the mongoDB server ${mongoUrl} while getting applications. ERROR: `, err);
+      } else{
+        console.log(`Connection established to ${mongoUrl}`);
+        applicationsCollection.find(query).toArray(function(err, result){
+          if(err){
+            console.error('Error while finding application from db', err);
+          } else if (result.length) {
+            console.log('=======>im result',result)
+            res.json(result);
+          } else {
+            res.json('No_Application_Found');
+            console.log('No_Application_Found');
+          };
+          db.close(function(){
+            console.log('db closed');
+          });
         });
-      });
-    };
-  });
+      };
+    });
+  }else{
+    MongoClient.connect(mongoUrl, function (err, db) {
+      let applicationsCollection = db.collection('applications');
+      if (err) {
+        console.error(`Unable to connect to the mongoDB server ${mongoUrl} while getting applications. ERROR: `, err);
+      } else{
+        console.log(`Connection established to ${mongoUrl}`);
+        applicationsCollection.find().toArray(function(err, result){
+          if(err){
+            console.error('Error while finding application from db', err);
+          } else if (result.length) {
+            console.log(result)
+            res.json(result);
+          } else {
+            res.json('No_Application_Found');
+            console.log('No_Application_Found');
+          };
+          db.close(function(){
+            console.log('db closed');
+          });
+        });
+      };
+    });
+  }
 }
 
 module.exports.createApplication = createApplication;

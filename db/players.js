@@ -31,38 +31,59 @@ function createPlayer(req, res, next){
 }
 
 function getPlayers(req, res, next){
-  let schoolId = req.query.school;
-  let query = {
-    school: {
-      $elemMatch:{
-        $eq: schoolId
-      }
-    }
-  };
-
-  MongoClient.connect(mongoUrl, function (err, db) {
-    let playersCollection = db.collection('players');
-    if (err) {
-      console.error(`Unable to connect to the mongoDB server ${mongoUrl} while getting players. ERROR: `, err);
-    } else{
-      console.log(`Connection established to ${mongoUrl}`);
-      console.log('========>',query)
-      playersCollection.find(query).toArray(function(err, result){
-        if(err){
-          console.error('Error while finding player name from db', err);
-        } else if (result.length) {
-          console.log(result)
-          res.json(result);
-        } else {
-          res.json('No_Player_Found');
-          console.log('No_Player_Found');
-        };
-        db.close(function(){
-          console.log('db closed');
-        });
-      });
+  if(req.query.school){
+    let schoolId = req.query.school;
+    let query = {
+      'school.id':  schoolId
     };
-  });
+    MongoClient.connect(mongoUrl, function (err, db) {
+      let playersCollection = db.collection('players');
+      if (err) {
+        console.error(`Unable to connect to the mongoDB server ${mongoUrl} while getting players. ERROR: `, err);
+      } else{
+        console.log(`Connection established to ${mongoUrl}`);
+        console.log('========>',query)
+        playersCollection.find(query).toArray(function(err, result){
+          if(err){
+            console.error('Error while finding player name from db', err);
+          } else if (result.length) {
+            console.log(result)
+            res.json(result);
+          } else {
+            res.json('No_Player_Found');
+            console.log('No_Player_Found');
+          };
+          db.close(function(){
+            console.log('db closed');
+          });
+        });
+      };
+    });
+  }else{
+    MongoClient.connect(mongoUrl, function (err, db) {
+      let playersCollection = db.collection('players');
+      if (err) {
+        console.error(`Unable to connect to the mongoDB server ${mongoUrl} while getting players. ERROR: `, err);
+      } else{
+        console.log(`Connection established to ${mongoUrl}`);
+        playersCollection.find().toArray(function(err, result){
+          if(err){
+            console.error('Error while finding player name from db', err);
+          } else if (result.length) {
+            console.log(result)
+            res.json(result);
+          } else {
+            res.json('No_Player_Found');
+            console.log('No_Player_Found');
+          };
+          db.close(function(){
+            console.log('db closed');
+          });
+        });
+      };
+    });
+  }
+
 }
 
 function deletePlayer(req, res, next){
@@ -76,7 +97,6 @@ function deletePlayer(req, res, next){
       let query = {
         _id: ObjectId(playerId)
       };
-      console.log(playerId)
       playersCollection.remove(query, function(err, result){
         if(err){
           console.error(`Error while deleteing player ${playerId} from db`, err);
@@ -92,23 +112,24 @@ function deletePlayer(req, res, next){
   });
 }
 
-function allPlayers(req, res, next){
+function singlePlayer(req, res, next){
   MongoClient.connect(mongoUrl, function (err, db) {
     let playersCollection = db.collection('players');
     if (err) {
-      console.error(`Unable to connect to the mongoDB server ${mongoUrl} while logging in. ERROR: `, err);
+      console.error(`Unable to connect to the mongoDB server ${mongoUrl} while deleting player. ERROR: `, err);
     } else{
       console.log(`Connection established to ${mongoUrl}`);
-      playersCollection.find().toArray(function(err, result){
+      let schoolId = req.params.schoolId;
+      let query = {
+        _id: ObjectId(playerId)
+      };
+      playersCollection.remove(query, function(err, result){
         if(err){
-          console.error('Error while finding player name from db', err);
-        } else if (result.length) {
-          console.log(result)
+          console.error(`Error while deleteing player ${playerId} from db`, err);
+        } else{
+          console.log('Deleted',result)
           res.json(result);
-        } else {
-          res.json('No_Player_Found');
-          console.log('No_Player_Found');
-        };
+        }
         db.close(function(){
           console.log('db closed');
         });
@@ -117,6 +138,6 @@ function allPlayers(req, res, next){
   });
 }
 module.exports.createPlayer = createPlayer;
-module.exports.allPlayers = allPlayers;
 module.exports.deletePlayer = deletePlayer;
 module.exports.getPlayers = getPlayers;
+module.exports.singlePlayer = singlePlayer;

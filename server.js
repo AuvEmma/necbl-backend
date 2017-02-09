@@ -14,6 +14,8 @@ const playersRoutes       = require( path.join(__dirname, '/routes/players'));
 const seasonsRoutes       = require( path.join(__dirname, '/routes/seasons'));
 const regionsRoutes       = require( path.join(__dirname, '/routes/regions'));
 const applicationsRoutes  = require( path.join(__dirname, '/routes/applications'));
+// const filesRoutes         = require( path.join(__dirname, '/routes/files'));
+
 const app                 = express();
 const _port               = process.argv[2]|| process.env.PORT||3001;
 const corsOptions         = {
@@ -38,6 +40,7 @@ app.use('/players', playersRoutes);
 app.use('/seasons', seasonsRoutes);
 app.use('/regions', regionsRoutes);
 app.use('/applications', applicationsRoutes);
+// app.use('/files', filesRoutes);
 
 app.get('/',(req,res)=>{
   res.sendFile(path.join(__dirname,'public/index.html'));
