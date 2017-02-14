@@ -34,7 +34,35 @@ function getPlayers(req, res, next){
   if(req.query.school){
     let schoolId = req.query.school;
     let query = {
-      'school.id':  schoolId
+      'schoolhistory.id':  schoolId
+    };
+    MongoClient.connect(mongoUrl, function (err, db) {
+      let playersCollection = db.collection('players');
+      if (err) {
+        console.error(`Unable to connect to the mongoDB server ${mongoUrl} while getting players. ERROR: `, err);
+      } else{
+        console.log(`Connection established to ${mongoUrl}`);
+        console.log('========>',query)
+        playersCollection.find(query).toArray(function(err, result){
+          if(err){
+            console.error('Error while finding player name from db', err);
+          } else if (result.length) {
+            console.log(result)
+            res.json(result);
+          } else {
+            res.json('No_Player_Found');
+            console.log('No_Player_Found');
+          };
+          db.close(function(){
+            console.log('db closed');
+          });
+        });
+      };
+    });
+  }else if(req.query.playerid){
+    let playerid = req.query.playerid;
+    let query = {
+      '_id': ObjectId(playerid)
     };
     MongoClient.connect(mongoUrl, function (err, db) {
       let playersCollection = db.collection('players');
