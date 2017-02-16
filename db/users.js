@@ -28,7 +28,8 @@ function createUser(req, res, next) {
         console.log(`Connection established to ${mongoUrl}`);
         let newSchool = {
           name: schoolName,
-          password: hash
+          password: hash,
+          canChangePassword: true
         };
         let query = {
           name: schoolName
@@ -71,7 +72,7 @@ function login(req, res, next) {
           console.log('found:', result);
           if (bcrypt.compareSync(passcode, result[0].password)) {
             var token = jwt.sign(schoolName, secret);
-            res.json({id: result[0]._id, name: result[0].name, token: token});
+            res.json({id: result[0]._id, name: result[0].name, token: token, canChangePassword: result[0].canChangePassword});
           }else{
             res.status(401).json({data: "password and schoolName do not match"})
           }
