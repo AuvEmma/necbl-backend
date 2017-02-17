@@ -4,7 +4,7 @@ const bcrypt        = require('bcrypt');
 const secret        = process.env.SECRET;
 
 const MongoClient   = mongodb.MongoClient;
-const mongoUrl      = 'mongodb://' + process.env.DB_URL + '/' + process.env.DB_NAME;
+const mongoUrl      = process.env.DB_URL;
 
 const salt          = bcrypt.genSaltSync(10);
 const jwt         = require('jsonwebtoken');

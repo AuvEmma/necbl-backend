@@ -1,7 +1,7 @@
 'use strict';
 const mongodb       = require('mongodb');
 const MongoClient   = mongodb.MongoClient;
-const mongoUrl      = 'mongodb://' + process.env.DB_URL + '/' + process.env.DB_NAME;
+const mongoUrl      = process.env.DB_URL;
 const ObjectId      = require('mongodb').ObjectID;
 
 function createGame(req, res, next){

@@ -1,7 +1,7 @@
 'use strict';
 const mongodb       = require('mongodb');
 const MongoClient   = mongodb.MongoClient;
-const mongoUrl      = 'mongodb://' + process.env.DB_URL + '/' + process.env.DB_NAME;
+const mongoUrl      = process.env.DB_URL;
 
 function createSeason(req, res, next){
   let seasonName    = req.body.seasonName;
