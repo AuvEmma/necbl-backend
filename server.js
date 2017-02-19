@@ -20,7 +20,7 @@ const filesRoutes         = require( path.join(__dirname, '/routes/files'));
 const app                 = express();
 const _port               = process.argv[2]|| process.env.PORT||3001;
 const corsOptions         = {
-  origin: ['http://localhost:3000','http://localhost:4200', 'http://54.158.161.155','https://54.158.161.155', 'http://www.necblcommunity.com/', 'https://www.necblcommunity.com/'],
+  origin: ['http://localhost:3000','http://localhost:4200', 'http://54.158.161.155','https://54.158.161.155', 'http://www.necblcommunity.com', 'https://www.necblcommunity.com'],
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 // enable cors and set options
