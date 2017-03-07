@@ -31,7 +31,38 @@ function createPlayer(req, res, next){
 }
 
 function getPlayers(req, res, next){
-  if(req.query.school){
+  if(req.query.school && req.query.season){
+    let schoolName = req.query.school;
+    let seasonId = req.query.season;
+    let query = {
+      'schoolhistory.name':  schoolName,
+      'seasonshistory.id':  seasonId
+    };
+    console.log(query)
+    MongoClient.connect(mongoUrl, function (err, db) {
+      let playersCollection = db.collection('players');
+      if (err) {
+        console.error(`Unable to connect to the mongoDB server ${mongoUrl} while getting players. ERROR: `, err);
+      } else{
+        console.log(`Connection established to ${mongoUrl}`);
+        console.log('========>',query)
+        playersCollection.find(query).toArray(function(err, result){
+          if(err){
+            console.error('Error while finding player name from db', err);
+          } else if (result.length) {
+            console.log(result)
+            res.json(result);
+          } else {
+            res.json('No_Player_Found');
+            console.log('No_Player_Found');
+          };
+          db.close(function(){
+            console.log('db closed');
+          });
+        });
+      };
+    });
+  }else if(req.query.school && !req.query.season){
     let schoolId = req.query.school;
     let query = {
       'schoolhistory.id':  schoolId
@@ -112,6 +143,36 @@ function getPlayers(req, res, next){
     });
   }
 
+}
+
+function getPlayerForGame(req, res, next){
+    let schoolId = req.query.school;
+    let query = {
+      'schoolhistory.id':  schoolId
+    };
+    MongoClient.connect(mongoUrl, function (err, db) {
+      let playersCollection = db.collection('players');
+      if (err) {
+        console.error(`Unable to connect to the mongoDB server ${mongoUrl} while getting players. ERROR: `, err);
+      } else{
+        console.log(`Connection established to ${mongoUrl}`);
+        console.log('========>',query)
+        playersCollection.find(query).toArray(function(err, result){
+          if(err){
+            console.error('Error while finding player name from db', err);
+          } else if (result.length) {
+            console.log(result)
+            res.json(result);
+          } else {
+            res.json('No_Player_Found');
+            console.log('No_Player_Found');
+          };
+          db.close(function(){
+            console.log('db closed');
+          });
+        });
+      };
+    });
 }
 
 function deletePlayer(req, res, next){
