@@ -33,6 +33,14 @@ app.use(bodyParser.json());
 // serve static files
 app.use(express.static(path.join(__dirname,'public')));
 
+app.get('/*',(req,res,next)=>{
+  if (!req.headers.origin) {
+    res.status(500).send('Not Authorized!')
+  }else{
+    next();
+  }
+})
+
 //set up some logging
 app.use(logger('dev'));
 
