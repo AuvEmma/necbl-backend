@@ -31,59 +31,76 @@ function createGame(req, res, next){
 }
 
 function getGames(req, res, next){
+  let query = {};
   if(req.query.schoolid){
     let schoolId = req.query.schoolid;
-    let query = {
+    query = {
       'schoolIds':  schoolId
     };
-    MongoClient.connect(mongoUrl, function (err, db) {
-      let gamesCollection = db.collection('games');
-      if (err) {
-        console.error(`Unable to connect to the mongoDB server ${mongoUrl} while getting games. ERROR: `, err);
-      } else{
-        console.log(`Connection established to ${mongoUrl}`);
-        gamesCollection.find(query).toArray(function(err, result){
-          if(err){
-            console.error('Error while finding game from db', err);
-          } else if (result.length) {
-            console.log(result)
-            res.json(result);
-          } else {
-            res.json('No_Game_Found');
-            console.log('No_Game_Found');
-          };
-          db.close(function(){
-            console.log('db closed');
-          });
-        });
-      };
-    });
-  }else{
-    MongoClient.connect(mongoUrl, function (err, db) {
-      let gamesCollection = db.collection('games');
-      if (err) {
-        console.error(`Unable to connect to the mongoDB server ${mongoUrl} while getting games. ERROR: `, err);
-      } else{
-        console.log(`Connection established to ${mongoUrl}`);
-        gamesCollection.find().toArray(function(err, result){
-          if(err){
-            console.error('Error while finding player name from db', err);
-          } else if (result.length) {
-            console.log(result)
-            res.json(result);
-          } else {
-            res.json('No_Player_Found');
-            console.log('No_Player_Found');
-          };
-          db.close(function(){
-            console.log('db closed');
-          });
-        });
-      };
-    });
+  }else if(req.query.gameId){
+    query = {
+      '_id': ObjectId(req.query.gameId)
+    }
   }
+  MongoClient.connect(mongoUrl, function (err, db) {
+    let gamesCollection = db.collection('games');
+    if (err) {
+      console.error(`Unable to connect to the mongoDB server ${mongoUrl} while getting games. ERROR: `, err);
+    } else{
+      console.log(`Connection established to ${mongoUrl}`);
+      gamesCollection.find(query).toArray(function(err, result){
+        if(err){
+          console.error('Error while finding game from db', err);
+        } else if (result.length) {
+          console.log(result)
+          res.json(result);
+        } else {
+          res.json('No_Game_Found');
+          console.log('No_Game_Found');
+        };
+        db.close(function(){
+          console.log('db closed');
+        });
+      });
+    };
+  });
+}
 
+function addStatToGame(req, res, next){
+  let stat = req.body.stat;
+  let game = req.body.stat.game;
+  delete stat.game;
+  delete stat.player;
+  let index = req.body.index;
+  let team = req.body.team;
+  let gameid = game._id;
+  game[team][index]['stat'] = stat;
+  delete game._id;
+  console.log(game, '=============game')
+  MongoClient.connect(mongoUrl, function (err, db) {
+    let gamesCollection = db.collection('games');
+    if (err) {
+      console.error(`Unable to connect to the mongoDB server ${mongoUrl} while getting games. ERROR: `, err);
+    } else{
+      console.log(`Connection established to ${mongoUrl}`);
+      let query = {
+        _id: ObjectId(gameid)
+      }
+      gamesCollection.update(query, game, function(err, result){
+        if(err){
+          console.error(`Error while adding stat to player ${gameid} from db`, err);
+        } else{
+          console.log('added stat to game',result)
+          res.json(result);
+        }
+        db.close(function(){
+          console.log('db closed');
+        });
+      });
+    };
+  });
 }
 
 module.exports.getGames = getGames;
 module.exports.createGame = createGame;
+module.exports.addStatToGame = addStatToGame;

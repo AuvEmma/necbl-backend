@@ -14,7 +14,9 @@ games.use(function(error, request, response, next) {
 games.route('/')
   .get( db.getGames )
   .post( db.createGame )
-//
+
+games.route('/stat')
+  .post( db.addStatToGame )
 // players.route('/:playerId')
 //   .get ( db.singlePlayer )
 //   .delete ( db.deletePlayer )
