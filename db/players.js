@@ -226,7 +226,45 @@ function singlePlayer(req, res, next){
     };
   });
 }
+
+function addPlayerStat(req, res, next){
+  let player = req.body.stat.player;
+  let game = req.body.stat.game;
+  let stat = req.body.stat;
+  delete stat.player;
+  delete stat.game.homeplayers;
+  delete stat.game.awayplayers;
+  MongoClient.connect(mongoUrl, function (err, db) {
+    let playersCollection = db.collection('players');
+    if (err) {
+      console.error(`Unable to connect to the mongoDB server ${mongoUrl} while deleting player. ERROR: `, err);
+    } else{
+      console.log(`Connection established to ${mongoUrl}`);
+      let query = {
+        _id: ObjectId(player._id)
+      };
+      let update = {
+        $push:{
+          "gameshistory":stat
+        }
+      };
+      playersCollection.update(query, update, function(err, result){
+        if(err){
+          console.error(`Error while adding stat to player ${player._id} from db`, err);
+        } else{
+          console.log('added stat',result)
+          res.json(result);
+        }
+        db.close(function(){
+          console.log('db closed');
+        });
+      });
+    };
+  });
+}
+
 module.exports.createPlayer = createPlayer;
 module.exports.deletePlayer = deletePlayer;
 module.exports.getPlayers = getPlayers;
 module.exports.singlePlayer = singlePlayer;
+module.exports.addPlayerStat = addPlayerStat;

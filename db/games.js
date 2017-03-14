@@ -66,5 +66,41 @@ function getGames(req, res, next){
   });
 }
 
+function addStatToGame(req, res, next){
+  let stat = req.body.stat;
+  let game = req.body.stat.game;
+  delete stat.game;
+  delete stat.player;
+  let index = req.body.index;
+  let team = req.body.team;
+  let gameid = game._id;
+  game[team][index]['stat'] = stat;
+  delete game._id;
+  console.log(game, '=============game')
+  MongoClient.connect(mongoUrl, function (err, db) {
+    let gamesCollection = db.collection('games');
+    if (err) {
+      console.error(`Unable to connect to the mongoDB server ${mongoUrl} while getting games. ERROR: `, err);
+    } else{
+      console.log(`Connection established to ${mongoUrl}`);
+      let query = {
+        _id: ObjectId(gameid)
+      }
+      gamesCollection.update(query, game, function(err, result){
+        if(err){
+          console.error(`Error while adding stat to player ${gameid} from db`, err);
+        } else{
+          console.log('added stat to game',result)
+          res.json(result);
+        }
+        db.close(function(){
+          console.log('db closed');
+        });
+      });
+    };
+  });
+}
+
 module.exports.getGames = getGames;
 module.exports.createGame = createGame;
+module.exports.addStatToGame = addStatToGame;
