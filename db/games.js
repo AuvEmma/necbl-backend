@@ -101,6 +101,40 @@ function addStatToGame(req, res, next){
   });
 }
 
+function addScoreToGame(req, res, next){
+  let data = req.body;
+  let score = data.score;
+  let gameid = data.game._id;
+  MongoClient.connect(mongoUrl, function (err, db) {
+    let gamesCollection = db.collection('games');
+    if (err) {
+      console.error(`Unable to connect to the mongoDB server ${mongoUrl} while getting games. ERROR: `, err);
+    } else{
+      console.log(`Connection established to ${mongoUrl}`);
+      let query = {
+        _id: ObjectId(gameid)
+      }
+      let update = {
+        $set:{
+          score : score
+        }
+      }
+      gamesCollection.update(query, update, function(err, result){
+        if(err){
+          console.error(`Error while adding stat to player ${gameid} from db`, err);
+        } else{
+          console.log('added stat to game',result.result)
+          res.json(result.result);
+        }
+        db.close(function(){
+          console.log('db closed');
+        });
+      });
+    };
+  });
+}
+
 module.exports.getGames = getGames;
 module.exports.createGame = createGame;
 module.exports.addStatToGame = addStatToGame;
+module.exports.addScoreToGame = addScoreToGame;

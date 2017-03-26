@@ -17,6 +17,10 @@ games.route('/')
 
 games.route('/stat')
   .post( db.addStatToGame )
+
+games.route('/stat/score')
+.post( db.addScoreToGame )
+
 // players.route('/:playerId')
 //   .get ( db.singlePlayer )
 //   .delete ( db.deletePlayer )
